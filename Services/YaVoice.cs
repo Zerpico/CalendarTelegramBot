@@ -16,39 +16,7 @@ namespace calendar_flood_bot.Services
     {
         static String URL = @"https://tts.voicetech.yandex.net/generate";
         static String Key = @"069b6659-984b-4c5f-880e-aaedcfd84102";
-       /* /// <summary>
-        /// Сгенерировать синтезированую речь из текста
-        /// </summary>
-        /// <param name="key">ключ доступа</param>
-        /// <param name="text">текст для синтеза</param>
-        /// <param name="_format">формат получаемого файла</param>
-        /// <param name="lang">язык</param>
-        /// <param name="_speaker">голос синтеза</param>
-        /// <param name="_quality">качество получаемого файла</param>
-        /// <param name="speed">скорость речи</param>
-        /// <param name="_emotion">эмоция речи</param>
-        public static Stream Synthes(string text, format _format,
-            speaker _speaker, quality _quality = quality.lo, double speed = 1.0,
-            emotion _emotion = emotion.good)
-        {
-            string getUrl = String.Format(URL + "?text={0}&format={1}&lang=ru-RU&speaker={2}&emotion={3}&quality={4}&speed={5}&key={6}",
-                text, _format, _speaker, _emotion, _quality, speed.ToString().Replace(',', '.'), Key);
-            try
-            {
-                WebRequest req = WebRequest.Create(getUrl);
-                WebResponse resp = req.GetResponse();
-                Stream stream = resp.GetResponseStream();
-                // StreamReader sr = new System.IO.StreamReader(stream);
-                //StreamWriter wr = new StreamWriter(stream);
-
-                //   SoundPlayer player = new SoundPlayer(stream);
-                //   player.PlaySync();
-                //   return true;
-                return stream;
-            }
-            catch (Exception) { return null; }
-
-        }*/
+       
 
         /// <summary>
         /// Сгенерировать синтезированую речь из текста
