@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using calendar_flood_bot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Telegram.Bot.Types;
 
 namespace calendar_flood_bot.Controllers
 {
@@ -11,36 +13,25 @@ namespace calendar_flood_bot.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        // GET: api/Message
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET: api/Message/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/Message
+        // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<OkResult> Post([FromBody]Update update)
         {
-        }
+            if (update == null) return Ok();
 
-        // PUT: api/Message/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            var commands = Bot.Commands;
+            var message = update.Message;
+            var botClient = await Bot.GetBotClientAsync();
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            foreach (var command in commands)
+            {
+                if (command.Contains(message))
+                {
+                    await command.Execute(message, botClient);
+                    break;
+                }
+            }
+            return Ok();
         }
     }
 }
