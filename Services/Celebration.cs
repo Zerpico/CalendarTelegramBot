@@ -9,12 +9,12 @@ namespace calendar_flood_bot.Services
 {
     public class Celebration
     {
-        public static async Task<string> GetCelebrationToday()
+        public static async Task<string[]> GetCelebrationToday()
         {
-            string result = string.Empty;
+            List<string> result = new List<string>();
 
             HttpWebRequest request = WebRequest.CreateHttp(@"http://kakoysegodnyaprazdnik.ru/");
-            var response = request.GetResponse();
+            var response = await request.GetResponseAsync();
             var stream = response.GetResponseStream();
 
             // parse
@@ -35,10 +35,10 @@ namespace calendar_flood_bot.Services
                 //находим блок перечисления праздния
                 var textparse = p.QuerySelectorAll("span");
                 if (textparse.Count() != 0)
-                    result += textparse.First().TextContent.Trim().Replace("•", "") + System.Environment.NewLine;
+                    result.Add(textparse.First().TextContent.Trim().Replace("•", ""));
             }
 
-            return result;
+            return result.ToArray();
         }
     }
 }

@@ -26,13 +26,13 @@ namespace calendar_flood_bot.Commands
                 {
                     var name = message.Text.Remove(0, 5).Length > 14 ? message.Text.Remove(0, 5).Substring(0, 14) : message.Text.Remove(0, 5);
                     Services.Speech speech = new Services.Speech();
-                    byte[] file = await speech.Synthes(message.Text.Remove(0, 5), Services.format.mp3, Services.speaker.zahar, Services.quality.lo, 0.9, Services.emotion.evil);
+                    byte[] file = await speech.Synthes(message.Text.Remove(0, 5), Services.format.mp3, Services.speaker.omazh, Services.quality.lo, 0.9, Services.emotion.evil);
                     await botClient.SendAudioAsync(message.Chat.Id, new Telegram.Bot.Types.InputFiles.InputOnlineFile(new System.IO.MemoryStream(file), name), replyToMessageId: message.MessageId);
                 }
             }
             catch(System.Exception ex)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
             }
         }
     }
