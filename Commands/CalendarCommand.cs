@@ -3,6 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace calendar_flood_bot.Commands
 {
@@ -23,17 +24,26 @@ namespace calendar_flood_bot.Commands
         public override async Task Execute(Message message, TelegramBotClient botClient)
         {
             try
-            {                
+            {               
+                //init vars
                 CultureInfo locale = new CultureInfo("ru-RU");
                 DateTime now = DateTime.Now;
+                string result = string.Empty;
 
-                var celebration = await Services.Celebration.GetCelebrationToday();
+                //получаем список праздников
+                var celebration = await Services.Celebration.GetCelebrationToday();                
+                //немного форматируем праздники
+                for (int i = 0; i < celebration.Count(); i++)
+                {
+                    result += "• " + celebration[i] + System.Environment.NewLine;
+                }
+
                 var chatId = message.Chat.Id;
-                await botClient.SendTextMessageAsync(chatId, "🎉 Сегодня 🎉  " + now.ToString("D", locale) + " - "+ now.ToString("ddd", locale) + "\n\n"+celebration, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+                await botClient.SendTextMessageAsync(chatId, "🎉 Сегодня 🎉  " + now.ToString("D", locale) + "\n\n"+celebration, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
             }
             catch (System.Exception ex)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Default);
             }
         }
     }

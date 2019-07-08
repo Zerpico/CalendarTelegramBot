@@ -32,7 +32,7 @@ namespace calendar_flood_bot.Commands
             }
             catch(System.Exception ex)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
             }
         }
     }
