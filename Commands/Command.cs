@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
+using System.Threading.Tasks;
 
-namespace calendar_flood_bot.Commands
+namespace CalendarTelegramBot.Commands
 {
     public abstract class Command
     {

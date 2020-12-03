@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using calendar_flood_bot.Models;
-using Microsoft.AspNetCore.Http;
+using CalendarTelegramBot.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
-namespace calendar_flood_bot.Controllers
+namespace CalendarTelegramBot.Controllers
 {
     [Route("api/message/update")]
     [ApiController]
@@ -15,7 +15,7 @@ namespace calendar_flood_bot.Controllers
     {
         // POST api/values
         [HttpPost]
-        public async Task<OkResult> Post([FromBody]Update update)
+        public async Task<OkResult> Post([FromBody] Update update)
         {
             if (update == null) return Ok();
 

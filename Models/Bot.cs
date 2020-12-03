@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CalendarTelegramBot.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using calendar_flood_bot.Commands;
 
-namespace calendar_flood_bot.Models
+namespace CalendarTelegramBot.Models
 {
     public class Bot
     {
@@ -23,7 +23,7 @@ namespace calendar_flood_bot.Models
 
             commandsList = new List<Command>();
             commandsList.Add(new StartCommand());
-            commandsList.Add(new SayCommand());
+            //commandsList.Add(new SayCommand());
             commandsList.Add(new CalendarCommand());
             commandsList.Add(new LeaveCommand());
             //TODO: Add more commands

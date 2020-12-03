@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace calendar_flood_bot.Services
+namespace CalendarTelegramBot.Services
 {
     public class Celebration
     {
@@ -42,3 +42,4 @@ namespace calendar_flood_bot.Services
         }
     }
 }
+

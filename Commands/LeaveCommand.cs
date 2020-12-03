@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace calendar_flood_bot.Commands
+namespace CalendarTelegramBot.Commands
 {
     public class LeaveCommand : Command
     {
