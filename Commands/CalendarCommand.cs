@@ -1,52 +1,54 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 using System;
 using System.Globalization;
 using System.Linq;
 
-namespace calendar_flood_bot.Commands
+namespace CalendarTelegramBot.Commands
 {
-    public class CalendarCommand : Command
+    public class CalendarCommand : BaseCommand
     {
         public override string Name => "/calendar";
 
-        public override bool Contains(Message message)
+        public CalendarCommand(ITelegramBotClient bot)
+            : base(bot)
         {
-            if (message.Type != Telegram.Bot.Types.Enums.MessageType.Text)
-                return false;
-
-            return message.Text.Contains(this.Name);
 
         }
 
-
-        public override async Task Execute(Message message, TelegramBotClient botClient)
+        public override async Task ExecuteAsync(CommandEventArgs e)
         {
-            try
-            {               
-                //init vars
-                CultureInfo locale = new CultureInfo("ru-RU");
-                DateTime now = DateTime.Now;
-                string result = string.Empty;
+            //init vars
+            CultureInfo locale = new CultureInfo("ru-RU");
 
-                //получаем список праздников
-                var celebration = await Services.Celebration.GetCelebrationToday();                
-                //немного форматируем праздники
-                for (int i = 0; i < celebration.Count(); i++)
-                {
-                    result += "• " + celebration[i] + System.Environment.NewLine;
-                }
+            TimeZoneInfo cstZone = null;
+            //Преобразует местное время во время в формате UTC и МСК пояс
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                cstZone = TimeZoneInfo.FindSystemTimeZoneById(@"Russian Standard Time");
+            else
+                cstZone = TimeZoneInfo.FindSystemTimeZoneById(@"Europe/Moscow");
 
-                var chatId = message.Chat.Id;
-                await botClient.SendTextMessageAsync(chatId, "🎉 Сегодня 🎉  " + now.ToString("D", locale) + "\n\n"+celebration, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
-            }
-            catch (System.Exception ex)
+            var nowUtc = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cstZone);
+
+
+            string result = string.Empty;
+
+            //получаем список праздников
+            var celebration = await Services.Celebration.GetCelebrationToday();
+            //немного форматируем праздники
+            for (int i = 0; i < celebration.Count(); i++)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, ex.Message, parseMode: Telegram.Bot.Types.Enums.ParseMode.Default);
+                result += "• " + celebration[i] + System.Environment.NewLine;
             }
+
+           
+
+            await Bot.SendTextMessageAsync(e.ChatId, "🎉 Сегодня 🎉  " + nowUtc.ToString("D", locale) + "\n\n" + result, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+
+           /* await Bot.SendTextMessageAsync(e.ChatId,
+                "Это календарный бот.\n" +
+                "Отправь /calendar и найду какие сегодня праздники");*/
         }
     }
-    
     
 }
