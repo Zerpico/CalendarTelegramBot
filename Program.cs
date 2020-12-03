@@ -1,26 +1,54 @@
+﻿using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Telegram.Bot;
 
 namespace CalendarTelegramBot
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            Log.Logger = new LoggerConfiguration()
+#if DEBUG
+                .MinimumLevel.Debug()
+#endif
+                .WriteTo.File("./logs/log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console()
+                .CreateLogger();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            var resetEvent = new ManualResetEvent(false);
+
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+
+            if (Environment.UserInteractive)
+            {
+                Console.OutputEncoding = Encoding.Unicode;
+            }
+
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => resetEvent.Set();
+            Console.CancelKeyPress += (s, e) =>
+            {
+                Log.Warning("Program exit requested. Exiting...");
+                resetEvent.Set();
+                e.Cancel = true;
+            };
+
+            var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
+
+            if (token == null)
+            {
+                Log.Error("Bot token was not specified. Please, check your GSHOP_BOT_TOKEN environment variable");
+                return;
+            }
+
+            var client = new TelegramBotClient(token);
+            var bot = new CaledarBot(Log.Logger, client);
+
+            bot.Run(resetEvent);
+        }
     }
 }
