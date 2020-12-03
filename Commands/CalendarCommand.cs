@@ -21,8 +21,13 @@ namespace CalendarTelegramBot.Commands
             //init vars
             CultureInfo locale = new CultureInfo("ru-RU");
 
+            TimeZoneInfo cstZone = null;
             //Преобразует местное время во время в формате UTC и МСК пояс
-            TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time");
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                cstZone = TimeZoneInfo.FindSystemTimeZoneById(@"Russian Standard Time");
+            else
+                cstZone = TimeZoneInfo.FindSystemTimeZoneById(@"Europe/Moscow");
+
             var nowUtc = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cstZone);
 
 
