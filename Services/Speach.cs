@@ -14,7 +14,7 @@ namespace CalendarTelegramBot.Services
     {
         public static speaker _speaker = speaker.Dasha_n;
 
-        static string URL = @"https://apihost.ru/d2.php";
+        static string URL = @"https://apihost.ru/d1_030321.php";
 
         static HttpClient client;
         static HttpClient Client
@@ -42,21 +42,12 @@ namespace CalendarTelegramBot.Services
                     new KeyValuePair<string, string>("speaker", _speaker.ToString()),
                     new KeyValuePair<string, string>("from", text)
                 });
-
-
-
-                var dict = new Dictionary<string, string>();
-                dict.Add("speaker", "Dasha_n");
-                dict.Add("from", text);
                
                 var req = new HttpRequestMessage(HttpMethod.Post, URL) { Content = formContent };
                 HttpResponseMessage response = null;
 
 
                 response = Client.SendAsync(req).ConfigureAwait(false).GetAwaiter().GetResult();
-
-
-
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

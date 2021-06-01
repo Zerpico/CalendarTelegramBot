@@ -13,9 +13,9 @@ namespace CalendarTelegramBot.Commands
 
         }
 
-        public override async Task ExecuteAsync(CommandEventArgs e)
+        /*public override async Task ExecuteAsync(CommandEventArgs e)
         {
-            await Bot.SendTextMessageAsync(e.ChatId, "Я не знаю такую команду.", replyToMessageId: (int)e.MessageId);
-        }
+            //await Bot.SendTextMessageAsync(e.ChatId, "Я не знаю такую команду.", replyToMessageId: (int)e.MessageId);
+        }*/
     }
 }
