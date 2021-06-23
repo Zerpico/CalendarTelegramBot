@@ -13,7 +13,7 @@ namespace CalendarTelegramBot.Services
         {
             List<string> result = new List<string>();
 
-            HttpWebRequest request = WebRequest.CreateHttp(@"http://kakoysegodnyaprazdnik.ru/");
+            HttpWebRequest request = WebRequest.CreateHttp(@"https://my-calend.ru/holidays");
             var response = await request.GetResponseAsync();
             var stream = response.GetResponseStream();
 
@@ -22,20 +22,21 @@ namespace CalendarTelegramBot.Services
             var doc = parser.ParseDocument(stream);
 
             //отбираем элементы
-            var parseItem = doc.QuerySelectorAll("div").Where(item => item.ClassName == "listing_wr").First();
-            var parseText = doc.QuerySelectorAll("span").First();
+            var parseItem = doc.QuerySelectorAll("ul").Where(item => item.ClassName == "holidays-items").First();
+            var parseText = doc.QuerySelectorAll("li");
 
             foreach (var p in parseItem.Children)
             {
-                //выйдем если наткнемся на рекламный блок, там чаще всего начичинаются праздники других стран
-                var dis = p.GetAttribute("id");
-                if (!string.IsNullOrEmpty(dis) && dis.Contains("pr_in"))
-                    break;
-
-                //находим блок перечисления праздния
-                var textparse = p.QuerySelectorAll("span");
-                if (textparse.Count() != 0)
-                    result.Add(textparse.First().TextContent.Trim().Replace("•", ""));
+                //находим блок названия праздника
+                var find = p.QuerySelectorAll("a").FirstOrDefault();
+                if (find != null)
+                    result.Add(find.TextContent.Trim());
+                else
+                {
+                    find = p.QuerySelectorAll("span").FirstOrDefault();
+                    if (find != null)
+                        result.Add(find.TextContent.Trim());
+                }
             }
 
             return result.ToArray();
