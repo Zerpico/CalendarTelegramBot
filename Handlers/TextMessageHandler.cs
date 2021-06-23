@@ -76,8 +76,10 @@ namespace CalendarTelegramBot.Handlers
             else
             {
                 // skip non-commands
-                if (!commandName.StartsWith("/"))
-                    return;
+                //if (!commandName.StartsWith("/"))
+                //    return;
+
+                args.CommandLine = message.Text;
 
                 _log.Information("Executing the default command...");
                 await _defaultCmd.ExecuteAsync(args);
