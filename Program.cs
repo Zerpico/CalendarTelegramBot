@@ -13,9 +13,7 @@ namespace CalendarTelegramBot
         static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-#if DEBUG
                 .MinimumLevel.Debug()
-#endif
                 .WriteTo.File("./logs/log.txt", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console()
                 .CreateLogger();
