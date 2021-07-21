@@ -20,36 +20,48 @@ namespace CalendarTelegramBot.Commands
 
         public override async Task ExecuteAsync(CommandEventArgs e)
         {
-            IEnumerable<PexelsDotNetSDK.Models.Photo> finds = null;
+           
             
             var text = e.CommandLine.ToLower();
-            if (text.Contains("лук"))
-            {
-                if (text.Contains("собака") || text.Contains("сабака"))
-                    finds = await OnionSearch.SearchOnion("dog+onion");
-                else finds = await OnionSearch.SearchOnion("onion");                
-            }
-            else if (text.Contains("лучок"))
-            {
-                finds = await OnionSearch.SearchOnion("onion");
-            }    
+            var findText = ParseText(text);
 
-            if (finds == null)
+            if (findText == string.Empty)
                 return;
 
-            int number = 1;            
-            var tagfinds = finds.ToDictionary(x => number++, x => x.source.portrait);
-            var url = tagfinds[rnd.Next(1, tagfinds.Count)];
-
-         
-            string[] splits = e.CommandLine.Split(new string[]{ " ", ".", "/r/n", "/n", Environment.NewLine }, StringSplitOptions.None);
-            var reply = splits.Where(d => d.ToLower().Contains("лук") || d.ToLower().Contains("лучок")).FirstOrDefault();
+            var imgUrls = OnionSearch.SearchOnion2(findText);
 
 
-            await Bot.SendTextMessageAsync(e.ChatId, "<i>Кто-то сказал <a href=\"" + url + "\">лук</a>?</i>" + Environment.NewLine+ "<code> &gt;" + reply + "</code>"+Environment.NewLine , replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+            var url = imgUrls[rnd.Next(0, imgUrls.Count < 10 ? imgUrls.Count : 10)];
+
+
+            await Bot.SendTextMessageAsync(e.ChatId, "<i>Кто-то сказал <a href=\"" + url + "\">лук</a>?</i>" + Environment.NewLine+ "<code> &gt;" + findText + "</code>"+Environment.NewLine , replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
 
 
             //await Bot.SendTextMessageAsync(e.ChatId, "Я не знаю такую команду.", replyToMessageId: (int)e.MessageId);
+        }
+
+        static string ParseText(string text)
+        {
+            string result = string.Empty;
+            if (text.Contains("лук") || text.Contains("лучок"))
+            {
+                string[] arr = text.ToString().Split(
+                   new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                int find = -1;
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i].Contains("лук") || arr[i].Contains("лучок"))
+                    {
+                        find = i;
+                        result = arr[i];
+                        break;
+                    }
+                }
+
+                if (find < arr.Length - 1) result += " " + arr[find + 1];
+                if (find > 0 && arr.Length > 1) result = arr[find - 1] + " " + result;               
+            }
+            return result;
         }
     }
 }
