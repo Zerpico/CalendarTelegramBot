@@ -28,15 +28,15 @@ namespace CalendarTelegramBot.Commands
             if (findText == string.Empty)
                 return;
 
-            var imgUrls = OnionSearch.SearchOnion2(findText);
+            var imgUrls = await OnionSearch.SearchOnion2(findText);
 
 
             var url = imgUrls[rnd.Next(0, imgUrls.Count < 10 ? imgUrls.Count : 10)];
 
 
-            await Bot.SendTextMessageAsync(e.ChatId, "<i>Кто-то сказал <a href=\"" + url + "\">лук</a>?</i>" + Environment.NewLine+ "<code> &gt;" + findText + "</code>"+Environment.NewLine , replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+            //await Bot.SendTextMessageAsync(e.ChatId, "<i>Кто-то сказал <a href=\"" + url + "\">лук</a>?</i>" + Environment.NewLine+ "<code> &gt;" + findText + "</code>"+Environment.NewLine , replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
 
-
+            await Bot.SendPhotoAsync(e.ChatId, new Telegram.Bot.Types.InputFiles.InputOnlineFile(url), "Кто-то сказал лук?" + Environment.NewLine + "<code> &gt;" + findText + "</code>", replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
             //await Bot.SendTextMessageAsync(e.ChatId, "Я не знаю такую команду.", replyToMessageId: (int)e.MessageId);
         }
 

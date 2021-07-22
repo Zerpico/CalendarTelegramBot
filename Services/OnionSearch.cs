@@ -16,14 +16,36 @@ namespace CalendarTelegramBot.Services
 {
     public class OnionSearch
     {
-        public static List<string> SearchOnion2(string searchText)
+        private static HttpClient _client;
+
+        private static HttpClient HttpClient
+        {
+            get
+            {
+                if (_client != null)
+                    return _client;
+
+                HttpClientHandler httpClientHandler = new HttpClientHandler();
+                httpClientHandler.DefaultProxyCredentials = CredentialCache.DefaultCredentials;
+                httpClientHandler.UseProxy = true;
+                httpClientHandler.AllowAutoRedirect = true;
+                httpClientHandler.UseCookies = true;
+
+                _client = new HttpClient(handler: httpClientHandler, disposeHandler: true);
+                return _client;
+            }
+        }
+
+        public async static Task<List<string>> SearchOnion2(string searchText)
         {
             string url = @"https://yandex.ru/images/search?format=json&request={'blocks':[{'block':'content_type_search','params':{},'version':2}]}&text=".Replace("'", "\"") + searchText;
-            var webClient = new WebClient();
+           
             var domParser = new HtmlParser();
 
             List<string> urlsParser = new List<string>();
-            var htmlDoc = webClient.DownloadString(url);
+
+            var response = await HttpClient.GetAsync(url);            
+            var htmlDoc = await response.Content.ReadAsStringAsync();
 
 
             Rootobject tmp = JsonConvert.DeserializeObject<Rootobject>(htmlDoc);
@@ -31,8 +53,7 @@ namespace CalendarTelegramBot.Services
                 return null;
 
             var htmlp = tmp.blocks[0].html;
-
-            Regex regex = new Regex(@"img_url=http[^&]+", RegexOptions.Singleline);
+                      
             foreach(Match match in Regex.Matches(htmlp, @"img_url=http[^&]+", RegexOptions.Singleline))
             {
                 if (match.Success)
@@ -42,7 +63,7 @@ namespace CalendarTelegramBot.Services
                 }
             }
 
-            return urlsParser.Distinct().ToList();
+            return await Task.FromResult(urlsParser.Distinct().ToList());
         }
     }
 
