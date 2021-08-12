@@ -55,7 +55,7 @@ namespace CalendarTelegramBot
               //  new Find2Command(_bot, storage),
               //  new ClearCommand(_bot, storage)
             };
-
+                        
             _messageHandlers[MessageType.Text] = new TextMessageHandler(_log, _bot, new DefaultCommand(_bot), commands);
             //_messageHandlers[MessageType.Document] = new DocumentMessageHandler(_log, _bot, parser, storage);
 

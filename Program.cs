@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using CalendarTelegramBot.Context;
 
 namespace CalendarTelegramBot
 {
@@ -34,6 +35,11 @@ namespace CalendarTelegramBot
                 resetEvent.Set();
                 e.Cancel = true;
             };
+
+            using(var dbContext = new DatabaseContext())
+            {
+                dbContext.Database.EnsureCreated();
+            }
 
             var token = Environment.GetEnvironmentVariable("BOT_TOKEN");
 

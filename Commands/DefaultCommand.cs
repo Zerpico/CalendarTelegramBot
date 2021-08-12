@@ -20,7 +20,6 @@ namespace CalendarTelegramBot.Commands
 
         public override async Task ExecuteAsync(CommandEventArgs e)
         {
-           
             
             var text = e.CommandLine.ToLower();
             var findText = ParseText(text);
@@ -28,16 +27,41 @@ namespace CalendarTelegramBot.Commands
             if (findText == string.Empty)
                 return;
 
+            using (var dbContext = new Context.DatabaseContext())
+            {
+                DateTime now = DateTime.Now;
+                DateTime startDay = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
+
+                var countOnion = dbContext.DbLogs.Where(d => d.ChatId == e.ChatId && d.UserId == e.UserId && (d.Dt >= startDay && d.Dt < startDay.AddDays(1))).Count();
+
+                if (!e.IsBotOwner)
+                if (countOnion <= 10 )
+                {
+                    dbContext.DbLogs.Add(
+                        new Context.DbLog()
+                        {
+                            ActionType = (int)Context.ActionType.onion,
+                            ChatId = e.ChatId,
+                            UserId = e.UserId,
+                            Dt = DateTime.Now
+                        });
+                    await dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    await Bot.SendTextMessageAsync(e.ChatId, "Вы исчерпали луковый поиск на сегодня", replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
+                    return;
+                }
+            }
+          
+
             var imgUrls = await OnionSearch.SearchOnion2(findText);
 
 
             var url = imgUrls[rnd.Next(0, imgUrls.Count < 10 ? imgUrls.Count : 10)];
 
-
-            //await Bot.SendTextMessageAsync(e.ChatId, "<i>Кто-то сказал <a href=\"" + url + "\">лук</a>?</i>" + Environment.NewLine+ "<code> &gt;" + findText + "</code>"+Environment.NewLine , replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
-
             await Bot.SendPhotoAsync(e.ChatId, new Telegram.Bot.Types.InputFiles.InputOnlineFile(url), "Кто-то сказал лук?" + Environment.NewLine + "<code> &gt;" + findText + "</code>", replyToMessageId: (int)e.MessageId, parseMode: Telegram.Bot.Types.Enums.ParseMode.Html);
-            //await Bot.SendTextMessageAsync(e.ChatId, "Я не знаю такую команду.", replyToMessageId: (int)e.MessageId);
+            
         }
 
         static string ParseText(string text)

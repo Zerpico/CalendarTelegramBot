@@ -26,6 +26,11 @@ namespace CalendarTelegramBot.Commands
         public long ChatId { get; set; }
 
         /// <summary>
+        /// User id
+        /// </summary>
+        public long UserId { get; set; }
+
+        /// <summary>
         /// Message id
         /// </summary>
         public long MessageId { get; set; }

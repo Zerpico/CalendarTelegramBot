@@ -61,6 +61,7 @@ namespace CalendarTelegramBot.Handlers
                 Bot = Bot,
                 CommandLine = commandLine,
                 ChatId = message.Chat.Id,
+                UserId = message.From.Id,
                 MessageId = message.MessageId,
                 IsBotOwner = member.IsBotOwner(),
                 IsAdmin = member.IsAdmin()
